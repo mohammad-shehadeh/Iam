@@ -7,5 +7,5 @@ const CONFIG = {
         OWNER: "mohammad-shehadeh",       // اسم المستخدم
         NAME: "Iam"                       // اسم المستودع
     },
-    FILE_PATH: "Server.js"               // اسم الملف داخل المستودع
+    FILE_PATH: "S8u9j9jwo#j$er9ver.js"               // اسم الملف داخل المستودع
 };
