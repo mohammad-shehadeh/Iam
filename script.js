@@ -1,26 +1,50 @@
-async function saveComplaint(newComplaint) {
+// Complaint submission handler
+document.getElementById('submitComplaint').addEventListener('click', async function() {
+    const complaintText = document.getElementById('complaintText');
+    const submitBtn = this;
+    const successMessage = document.getElementById('successMessage');
+
+    if (!complaintText.value.trim()) {
+        alert('Please enter your complaint text');
+        return;
+    }
+
     try {
-        // 1. تجميع التوكن والتحقق منه
-        const token = assembleGitHubToken();
-        if (!token || token.length < 30) {
-            throw new Error("توكن GitHub غير صالح");
-        }
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'Sending...';
+        
+        const complaint = {
+            id: Date.now(),
+            text: complaintText.value, // Arabic text preserved here only
+            date: new Date().toISOString(),
+            status: 'new'
+        };
 
-        // 2. التحقق من وجود المستودع
-        const repoUrl = `https://api.github.com/repos/${CONFIG.REPO.OWNER}/${CONFIG.REPO.NAME}`;
-        const repoResponse = await fetch(repoUrl, {
-            headers: {
-                'Authorization': `token ${token}`,
-                'Accept': 'application/vnd.github.v3+json'
-            }
-        });
+        await saveComplaint(complaint);
+        
+        complaintText.value = '';
+        successMessage.style.display = 'block';
+        
+        setTimeout(() => {
+            successMessage.style.display = 'none';
+        }, 3000);
+        
+    } catch (error) {
+        console.error('Error:', error);
+        alert('Failed to submit complaint: ' + error.message);
+    } finally {
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Submit Complaint';
+    }
+});
 
-        if (!repoResponse.ok) {
-            throw new Error("المستودع غير موجود أو لا يوجد وصول");
-        }
+// Save complaint to GitHub
+async function saveComplaint(newComplaint) {
+    const token = assembleGitHubToken();
+    const fileUrl = `https://api.github.com/repos/${CONFIG.REPO.OWNER}/${CONFIG.REPO.NAME}/contents/${CONFIG.FILE_PATH}`;
 
-        // 3. جلب محتوى الملف الحالي
-        const fileUrl = `https://api.github.com/repos/${CONFIG.REPO.OWNER}/${CONFIG.REPO.NAME}/contents/${CONFIG.FILE_PATH}`;
+    try {
+        // 1. Get current file content
         const fileResponse = await fetch(fileUrl, {
             headers: {
                 'Authorization': `token ${token}`,
@@ -36,18 +60,18 @@ async function saveComplaint(newComplaint) {
             currentContent = atob(fileData.content.replace(/\s/g, ''));
             sha = fileData.sha;
         } else if (fileResponse.status !== 404) {
-            throw new Error("فشل في جلب الملف: " + fileResponse.statusText);
+            throw new Error(`API Error: ${fileResponse.statusText}`);
         }
 
-        // 4. إضافة الشكوى الجديدة
+        // 2. Prepare updated content (English metadata + Arabic complaint)
         const updatedContent = currentContent + 
-            `\n\n## شكوى #${newComplaint.id}\n` +
-            `**التاريخ:** ${new Date(newComplaint.date).toLocaleString('ar-EG')}\n` +
-            `**الحالة:** ${newComplaint.status}\n` +
-            `**النص:**\n${newComplaint.text}\n` +
+            `\n\n## Complaint #${newComplaint.id}\n` +
+            `**Date:** ${new Date(newComplaint.date).toLocaleString('en-US')}\n` +
+            `**Status:** ${newComplaint.status}\n` +
+            `**Text:**\n${newComplaint.text}\n` +  // Arabic text preserved here
             `---`;
 
-        // 5. رفع التحديثات
+        // 3. Update file on GitHub
         const updateResponse = await fetch(fileUrl, {
             method: 'PUT',
             headers: {
@@ -56,7 +80,7 @@ async function saveComplaint(newComplaint) {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-                message: 'إضافة شكوى جديدة - ' + new Date().toISOString(),
+                message: `New complaint added - ID: ${newComplaint.id}`,
                 content: btoa(unescape(encodeURIComponent(updatedContent))),
                 sha: sha || undefined
             })
@@ -64,12 +88,12 @@ async function saveComplaint(newComplaint) {
 
         if (!updateResponse.ok) {
             const errorData = await updateResponse.json();
-            throw new Error(errorData.message || "فشل في حفظ الشكوى");
+            throw new Error(errorData.message || "Failed to update file");
         }
 
         return true;
     } catch (error) {
-        console.error("Error details:", error);
-        throw new Error(`فشل في عملية الحفظ: ${error.message}`);
+        console.error('API Error Details:', error);
+        throw new Error(`Failed to save complaint: ${error.message}`);
     }
 }
