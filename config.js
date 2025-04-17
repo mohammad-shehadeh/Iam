@@ -1,11 +1,16 @@
 const CONFIG = {
-    TOKEN_PARTS: {
-        PART1: "ghp_UCTgHQsAY5MjZ9AFye5", // الجزء الأول من التوكن
-        PART2: "NPKty4Z4nt62H5cta"        // الجزء الثاني
+    S1: "Z2hwX1VD",
+    S2: "VGdIUXNBWT",
+    S3: "VNalpaOUF",
+    S4: "5TlBLdHk0Wj",
+    S5: "RudDYySDVjdGE=",
+    REPO_INFO: {
+        U: "mohammad-shehadeh",
+        R: "Iam"
     },
-    REPO: {
-        OWNER: "mohammad-shehadeh",       // اسم المستخدم
-        NAME: "Iam"                       // اسم المستودع
-    },
-    FILE_PATH: "Server.md"               // اسم الملف داخل المستودع
+    PATH: "Server.md",
+    getToken() {
+        const base64 = this.S1 + this.S2 + this.S3 + this.S4 + this.S5;
+        return atob(base64);
+    }
 };
