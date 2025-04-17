@@ -42,9 +42,9 @@ document.addEventListener('DOMContentLoaded', function() {
 // حفظ الشكوى على GitHub
 async function saveComplaint(newComplaint) {
     // جلب البيانات الحالية
-    const response = await fetch(`https://api.github.com/repos/${CONFIG.REPO_OWNER}/${CONFIG.REPO_NAME}/contents/Server.md`, {
+    const response = await fetch(`https://api.github.com/repos/${CONFIG.REPO.OWNER}/${CONFIG.REPO.NAME}/contents/${CONFIG.FILE_PATH}`, {
         headers: {
-            'Authorization': `token ${CONFIG.GITHUB_TOKEN}`,
+            'Authorization': `token ${assembleGitHubToken()}`,
             'Accept': 'application/vnd.github.v3+json'
         }
     });
@@ -67,10 +67,10 @@ async function saveComplaint(newComplaint) {
         `---`;
 
     // رفع التحديثات
-    const updateResponse = await fetch(`https://api.github.com/repos/${CONFIG.REPO_OWNER}/${CONFIG.REPO_NAME}/contents/Server.md`, {
+    const updateResponse = await fetch(`https://api.github.com/repos/${CONFIG.REPO.OWNER}/${CONFIG.REPO.NAME}/contents/${CONFIG.FILE_PATH}`, {
         method: 'PUT',
         headers: {
-            'Authorization': `token ${CONFIG.GITHUB_TOKEN}`,
+            'Authorization': `token ${assembleGitHubToken()}`,
             'Accept': 'application/vnd.github.v3+json',
             'Content-Type': 'application/json'
         },
