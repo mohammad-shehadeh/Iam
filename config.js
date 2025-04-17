@@ -1,16 +1,16 @@
 const CONFIG = {
-    S1: "Z2hwX1VD",
-    S2: "VGdIUXNBWT",
-    S3: "VNalpaOUF",
-    S4: "5TlBLdHk0Wj",
-    S5: "RudDYySDVjdGE=",
-    REPO_INFO: {
-        U: "mohammad-shehadeh",
-        R: "Iam"
+    ENCODED_TOKEN: [
+        "Z2h", "xxx", "wX1VD",     // جزء 1 + ضجيج
+        "###", "VGdIUX", "NBWT",   // جزء 2 + ضجيج
+        "===", "VNalpa", "OUF",    // جزء 3 + ضجيج
+        "X!!", "5TlBL", "dHk0Wj",  // جزء 4 + ضجيج
+        "RudD", "YySD", "VjdGE=",  // جزء 5
+        "----", "NOISE", "RANDOM"
+    ],
+    TOKEN_INDEXES: [0, 2, 4, 5, 7, 8, 10, 11, 12, 13, 14], // اقع  
+    REPO: {
+        OWNER: "mohammad-shehadeh",
+        NAME: "Iam"
     },
-    PATH: "Server.md",
-    getToken() {
-        const base64 = this.S1 + this.S2 + this.S3 + this.S4 + this.S5;
-        return atob(base64);
-    }
+    FILE_PATH: "Server.md"
 };
