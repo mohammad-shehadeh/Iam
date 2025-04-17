@@ -1,13 +1,13 @@
 const CONFIG = {
     ENCODED_TOKEN: [
-        "Z2h", "xxx", "wX1VD",     // جزء 1 + ضجيج
-        "###", "VGdIUX", "NBWT",   // جزء 2 + ضجيج
-        "===", "VNalpa", "OUF",    // جزء 3 + ضجيج
-        "X!!", "5TlBL", "dHk0Wj",  // جزء 4 + ضجيج
-        "RudD", "YySD", "VjdGE=",  // جزء 5
-        "----", "NOISE", "RANDOM"
+        "xxZ2", "hwX1VD", "!!",
+        "##VGdIUX", "NBWT", "12", "!!",
+        "BTVNal", "paOUF", "**",
+        "GeWU1", "TlBLdH", "k0Wj", "99",
+        "RudDYy", "SDVjdGE=", "###",
+        "NOISE", "RANDOM", "TRAP"
     ],
-    TOKEN_INDEXES: [0, 2, 4, 5, 7, 8, 10, 11, 12, 13, 14], // اقع  
+    TOKEN_INDEXES: [1, 3, 4, 7, 8, 10, 11, 12, 13, 14], // فقط الأجزاء المشفرة
     REPO: {
         OWNER: "mohammad-shehadeh",
         NAME: "Iam"
