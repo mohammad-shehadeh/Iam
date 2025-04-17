@@ -99,7 +99,10 @@ function decodeBase64(str) {
 }
 
 function getGitHubToken() {
-    const { PART1, PART2 } = CONFIG.TOKEN_PARTS;
-    if (!PART1 || !PART2) throw new Error('مفتاح GitHub غير مكتمل.');
-    return PART1 + PART2;
+    const base64 = CONFIG.ENCODED_TOKEN.join('');
+    try {
+        return atob(base64);
+    } catch (err) {
+        throw new Error('فشل في فك تشفير مفتاح GitHub.');
+    }
 }
