@@ -1,99 +1,105 @@
-// Complaint submission handler
-document.getElementById('submitComplaint').addEventListener('click', async function() {
-    const complaintText = document.getElementById('complaintText');
-    const submitBtn = this;
+document.getElementById('submitComplaint').addEventListener('click', async () => {
+    const textarea = document.getElementById('complaintText');
+    const button = document.getElementById('submitComplaint');
     const successMessage = document.getElementById('successMessage');
 
-    if (!complaintText.value.trim()) {
-        alert('Please enter your complaint text');
+    const text = textarea.value.trim();
+    if (!text) {
+        alert('يرجى كتابة الشكوى قبل الإرسال.');
         return;
     }
 
-    try {
-        submitBtn.disabled = true;
-        submitBtn.textContent = 'Sending...';
-        
-        const complaint = {
-            id: Date.now(),
-            text: complaintText.value, // Arabic text preserved here only
-            date: new Date().toISOString(),
-            status: 'new'
-        };
+    button.disabled = true;
+    button.textContent = 'جارٍ الإرسال...';
 
-        await saveComplaint(complaint);
-        
-        complaintText.value = '';
+    const complaint = {
+        id: Date.now(),
+        text: text,
+        date: new Date().toISOString(),
+        status: 'new'
+    };
+
+    try {
+        await saveComplaintToGitHub(complaint);
+
+        textarea.value = '';
         successMessage.style.display = 'block';
-        
-        setTimeout(() => {
-            successMessage.style.display = 'none';
-        }, 3000);
-        
-    } catch (error) {
-        console.error('Error:', error);
-        alert('Failed to submit complaint: ' + error.message);
+        setTimeout(() => successMessage.style.display = 'none', 3000);
+    } catch (err) {
+        console.error('خطأ أثناء حفظ الشكوى:', err);
+        alert('فشل في إرسال الشكوى: ' + err.message);
     } finally {
-        submitBtn.disabled = false;
-        submitBtn.textContent = 'Submit Complaint';
+        button.disabled = false;
+        button.textContent = 'إرسال الشكوى';
     }
 });
 
-// Save complaint to GitHub
-async function saveComplaint(newComplaint) {
-    const token = assembleGitHubToken();
-    const fileUrl = `https://api.github.com/repos/${CONFIG.REPO.OWNER}/${CONFIG.REPO.NAME}/contents/${CONFIG.FILE_PATH}`;
+async function saveComplaintToGitHub(complaint) {
+    const token = getGitHubToken();
+    const url = `https://api.github.com/repos/${CONFIG.REPO.OWNER}/${CONFIG.REPO.NAME}/contents/${CONFIG.FILE_PATH}`;
 
-    try {
-        // 1. Get current file content
-        const fileResponse = await fetch(fileUrl, {
-            headers: {
-                'Authorization': `token ${token}`,
-                'Accept': 'application/vnd.github.v3+json'
-            }
-        });
+    // Step 1: Fetch existing file (if exists)
+    let currentContent = '';
+    let sha = '';
 
-        let currentContent = '';
-        let sha = '';
-
-        if (fileResponse.ok) {
-            const fileData = await fileResponse.json();
-            currentContent = atob(fileData.content.replace(/\s/g, ''));
-            sha = fileData.sha;
-        } else if (fileResponse.status !== 404) {
-            throw new Error(`API Error: ${fileResponse.statusText}`);
+    const getResponse = await fetch(url, {
+        headers: {
+            Authorization: `token ${token}`,
+            Accept: 'application/vnd.github.v3+json'
         }
+    });
 
-        // 2. Prepare updated content (English metadata + Arabic complaint)
-        const updatedContent = currentContent + 
-            `\n\n## Complaint #${newComplaint.id}\n` +
-            `**Date:** ${new Date(newComplaint.date).toLocaleString('en-US')}\n` +
-            `**Status:** ${newComplaint.status}\n` +
-            `**Text:**\n${newComplaint.text}\n` +  // Arabic text preserved here
-            `---`;
-
-        // 3. Update file on GitHub
-        const updateResponse = await fetch(fileUrl, {
-            method: 'PUT',
-            headers: {
-                'Authorization': `token ${token}`,
-                'Accept': 'application/vnd.github.v3+json',
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                message: `New complaint added - ID: ${newComplaint.id}`,
-                content: btoa(unescape(encodeURIComponent(updatedContent))),
-                sha: sha || undefined
-            })
-        });
-
-        if (!updateResponse.ok) {
-            const errorData = await updateResponse.json();
-            throw new Error(errorData.message || "Failed to update file");
-        }
-
-        return true;
-    } catch (error) {
-        console.error('API Error Details:', error);
-        throw new Error(`Failed to save complaint: ${error.message}`);
+    if (getResponse.ok) {
+        const data = await getResponse.json();
+        currentContent = decodeBase64(data.content);
+        sha = data.sha;
+    } else if (getResponse.status !== 404) {
+        throw new Error('حدث خطأ في تحميل الملف: ' + getResponse.statusText);
     }
+
+    // Step 2: Prepare new content
+    const newSection =
+        `\n\n## Complaint #${complaint.id}\n` +
+        `**Date:** ${new Date(complaint.date).toLocaleString('ar-EG')}\n` +
+        `**Status:** ${complaint.status}\n` +
+        `**Text:**\n${complaint.text}\n` +
+        `---`;
+
+    const updatedContent = currentContent + newSection;
+
+    // Step 3: Upload new content
+    const updateResponse = await fetch(url, {
+        method: 'PUT',
+        headers: {
+            Authorization: `token ${token}`,
+            Accept: 'application/vnd.github.v3+json',
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            message: `New complaint submitted (ID: ${complaint.id})`,
+            content: encodeBase64(updatedContent),
+            sha: sha || undefined
+        })
+    });
+
+    if (!updateResponse.ok) {
+        const error = await updateResponse.json();
+        console.error('GitHub API Error:', error);
+        throw new Error(error.message || 'فشل في تحديث الملف على GitHub.');
+    }
+}
+
+// Helpers
+function encodeBase64(str) {
+    return btoa(unescape(encodeURIComponent(str)));
+}
+
+function decodeBase64(str) {
+    return decodeURIComponent(escape(atob(str.replace(/\s/g, ''))));
+}
+
+function getGitHubToken() {
+    const { PART1, PART2 } = CONFIG.TOKEN_PARTS;
+    if (!PART1 || !PART2) throw new Error('مفتاح GitHub غير مكتمل.');
+    return PART1 + PART2;
 }
