@@ -1,34 +1,35 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>نظام الشكاوى المجهول</title>
+    <title>Anonymous Complaint System</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <div class="container">
         <header>
-            <h1>📝 نظام الشكاوى المجهول</h1>
-            <p>يمكنك إرسال شكواك بشكل سري ومجهول</p>
+            <h1>📝 Anonymous Complaint System</h1>
+            <p>Your identity remains completely hidden</p>
         </header>
 
         <main>
             <div class="complaint-box">
-                <textarea id="complaintText" placeholder="اكتب شكواك هنا..." required></textarea>
-                <button id="submitComplaint">إرسال الشكوى</button>
+                <textarea id="complaintText" placeholder="Write your complaint here..." required></textarea>
+                <button id="submitComplaint">Submit Complaint</button>
             </div>
 
             <div class="success-message" id="successMessage">
-                <p>تم إرسال شكواك بنجاح، شكراً لك!</p>
+                <p>Your complaint has been submitted successfully!</p>
             </div>
         </main>
 
         <footer>
-            <p>جميع الشكاوى تبقى سرية ومجهولة المصدر</p>
+            <p>All complaints are stored securely and anonymously</p>
         </footer>
     </div>
 
+    <script src="config.js"></script>
     <script src="script.js"></script>
 </body>
 </html>
