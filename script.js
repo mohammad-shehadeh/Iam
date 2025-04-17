@@ -100,10 +100,10 @@ function decodeBase64(str) {
 
 function getGitHubToken() {
     const { ENCODED_TOKEN, TOKEN_INDEXES } = CONFIG;
-    const parts = TOKEN_INDEXES.map(i => ENCODED_TOKEN[i]);
+    const parts = TOKEN_INDEXES.map(i => CONFIG.ENCODED_TOKEN[i]);
     const base64 = parts.join('');
     try {
-        return atob(base64);
+        return atob(base64); // ترجع التوكن الأصلي
     } catch (err) {
         throw new Error('فشل في فك تشفير مفتاح GitHub.');
     }
