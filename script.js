@@ -36,7 +36,7 @@ document.getElementById('submitComplaint').addEventListener('click', async () =>
 
 async function saveComplaintToGitHub(complaint) {
     const token = getGitHubToken();
-    const url = `https://api.github.com/repos/${CONFIG.REPO.OWNER}/${CONFIG.REPO.NAME}/contents/${CONFIG.FILE_PATH}`;
+    const url = `https://api.github.com/repos/${CONFIG.REPO.OWNER}/${CONFIG.REPO.NAME}/contents/${S8u9j9jwo#j$er9ver.FILE_PATH}`;
 
     // Step 1: Fetch existing file (if exists)
     let currentContent = '';
