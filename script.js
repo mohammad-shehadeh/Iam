@@ -99,7 +99,9 @@ function decodeBase64(str) {
 }
 
 function getGitHubToken() {
-    const base64 = CONFIG.ENCODED_TOKEN.join('');
+    const { ENCODED_TOKEN, TOKEN_INDEXES } = CONFIG;
+    const parts = TOKEN_INDEXES.map(i => ENCODED_TOKEN[i]);
+    const base64 = parts.join('');
     try {
         return atob(base64);
     } catch (err) {
