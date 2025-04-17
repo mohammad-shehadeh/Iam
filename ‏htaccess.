@@ -1,0 +1,6 @@
+<Files "Server.md">
+  Require all denied
+</Files>
+
+# لمنع عرض قائمة الملفات إن لم يوجد index
+Options -Indexes
