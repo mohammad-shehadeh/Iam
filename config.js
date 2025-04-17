@@ -5,7 +5,7 @@ const CONFIG = {
     },
     REPO: {
         OWNER: "mohammad-shehadeh",
-        NAME: "otp"
+        NAME: "Iam"
     },
     FILE_PATH: "Server.md"
 };
