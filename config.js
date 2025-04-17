@@ -5,7 +5,7 @@ const CONFIG = {
     },
     REPO: {
         OWNER: "mohammad-shehadeh",       // اسم المستخدم على GitHub
-        NAME: "otp"                       // اسم المستودع
+        NAME: "Iam"                       // اسم المستودع
     },
     FILE_PATH: "Server.md"                // مسار الملف
 };
