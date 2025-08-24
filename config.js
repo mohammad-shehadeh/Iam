@@ -1,7 +1,7 @@
 const CONFIG = {
     TOKEN_PARTS: {
-        PART1: "ghp_UCTgHQsAY5MjZ9AFye5", // الجزء الأول من التوكن
-        PART2: "NPKty4Z4nt62H5cta"        // الجزء الثاني
+        PART1: "‏ghp_eiG7dzoWlGnpAXlQxLAM", // الجزء الأول من التوكن
+        PART2: "zDyU7yRw073FQlnR"        // الجزء الثاني
     },
     REPO: {
         OWNER: "mohammad-shehadeh",       // اسم المستخدم
